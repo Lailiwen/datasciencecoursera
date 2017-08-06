@@ -1,0 +1,104 @@
+==================================================================
+TidyData Code Book
+==================================================================
+
+subjectID
+	ID for 30 volunteers
+
+activityID
+	Activity Code
+	1
+	2
+	3
+	4
+	5
+	6
+
+activityType
+	Description for Activity Code
+	WALKING
+	WALKING_UPSTAIRS
+	WALKING_DOWNSTAIRS
+	SITTING
+	STANDING
+	LAYING
+
+TimeBodyAcceleration-Mean()-X
+TimeBodyAcceleration-Mean()-Y
+TimeBodyAcceleration-Mean()-Z
+TimeBodyAcceleration-Std()-X
+TimeBodyAcceleration-Std()-Y
+TimeBodyAcceleration-Std()-Z
+TimeGravityAcceleration-Mean()-X
+TimeGravityAcceleration-Mean()-Y
+TimeGravityAcceleration-Mean()-Z
+TimeGravityAcceleration-Std()-X
+TimeGravityAcceleration-Std()-Y
+TimeGravityAcceleration-Std()-Z
+TimeBodyAccelerationJerk-Mean()-X
+TimeBodyAccelerationJerk-Mean()-Y
+TimeBodyAccelerationJerk-Mean()-Z
+TimeBodyAccelerationJerk-Std()-X
+TimeBodyAccelerationJerk-Std()-Y
+TimeBodyAccelerationJerk-Std()-Z
+TimeBodyGyro-Mean()-X
+TimeBodyGyro-Mean()-Y
+TimeBodyGyro-Mean()-Z
+TimeBodyGyro-Std()-X
+TimeBodyGyro-Std()-Y
+TimeBodyGyro-Std()-Z
+TimeBodyGyroJerk-Mean()-X
+TimeBodyGyroJerk-Mean()-Y
+TimeBodyGyroJerk-Mean()-Z
+TimeBodyGyroJerk-Std()-X
+TimeBodyGyroJerk-Std()-Y
+TimeBodyGyroJerk-Std()-Z
+TimeBodyAccelerationMagnitude-Mean()
+TimeBodyAccelerationMagnitude-Std()
+TimeGravityAccelerationMagnitude-Mean()
+TimeGravityAccelerationMagnitude-Std()
+TimeBodyAccelerationJerkMagnitude-Mean()
+TimeBodyAccelerationJerkMagnitude-Std()
+TimeBodyGyroMagnitude-Mean()
+TimeBodyGyroMagnitude-Std()
+TimeBodyGyroJerkMagnitude-Mean()
+TimeBodyGyroJerkMagnitude-Std()
+FrequencyBodyAcceleration-Mean()-X
+FrequencyBodyAcceleration-Mean()-Y
+FrequencyBodyAcceleration-Mean()-Z
+FrequencyBodyAcceleration-Std()-X
+FrequencyBodyAcceleration-Std()-Y
+FrequencyBodyAcceleration-Std()-Z
+FrequencyBodyAcceleration-MeanFreq()-X
+FrequencyBodyAcceleration-MeanFreq()-Y
+FrequencyBodyAcceleration-MeanFreq()-Z
+FrequencyBodyAccelerationJerk-Mean()-X
+FrequencyBodyAccelerationJerk-Mean()-Y
+FrequencyBodyAccelerationJerk-Mean()-Z
+FrequencyBodyAccelerationJerk-Std()-X
+FrequencyBodyAccelerationJerk-Std()-Y
+FrequencyBodyAccelerationJerk-Std()-Z
+FrequencyBodyAccelerationJerk-MeanFreq()-X
+FrequencyBodyAccelerationJerk-MeanFreq()-Y
+FrequencyBodyAccelerationJerk-MeanFreq()-Z
+FrequencyBodyGyro-Mean()-X
+FrequencyBodyGyro-Mean()-Y
+FrequencyBodyGyro-Mean()-Z
+FrequencyBodyGyro-Std()-X
+FrequencyBodyGyro-Std()-Y
+FrequencyBodyGyro-Std()-Z
+FrequencyBodyGyro-MeanFreq()-X
+FrequencyBodyGyro-MeanFreq()-Y
+FrequencyBodyGyro-MeanFreq()-Z
+FrequencyBodyAccelerationMagnitude-Mean()
+FrequencyBodyAccelerationMagnitude-Std()
+FrequencyBodyAccelerationMagnitude-MeanFreq()
+FrequencyBodyAccelerationJerkMagnitude-Mean()
+FrequencyBodyAccelerationJerkMagnitude-Std()
+FrequencyBodyAccelerationJerkMagnitude-MeanFreq()
+FrequencyBodyGyroMagnitude-Mean()
+FrequencyBodyGyroMagnitude-Std()
+FrequencyBodyGyroMagnitude-MeanFreq()
+FrequencyBodyGyroJerkMagnitude-Mean()
+FrequencyBodyGyroJerkMagnitude-Std()
+FrequencyBodyGyroJerkMagnitude-MeanFreq()
