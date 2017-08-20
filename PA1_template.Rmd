@@ -1,0 +1,161 @@
+---
+title: "Module 5 Course Project 1"
+author: "LLW"
+date: "20 August 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+It is now possible to collect a large amount of data about personal movement using activity monitoring devices such as a Fitbit, Nike Fuelband, or Jawbone Up. These type of devices are part of the "quantified self" movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. But these data remain under-utilized both because the raw data are hard to obtain and there is a lack of statistical methods and software for processing and interpreting the data.
+
+This assignment makes use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
+
+The data for this assignment can be downloaded from the course web site:
+
+- Dataset: Activity monitoring data
+
+The variables included in this dataset are:
+
+- steps: Number of steps taking in a 5-minute interval (missing values are coded as NA)
+- date: The date on which the measurement was taken in YYYY-MM-DD format
+- interval: Identifier for the 5-minute interval in which measurement was taken
+
+The dataset is stored in a comma-separated-value (CSV) file and there are a total of 17,568 observations in this dataset.
+
+## Assignment
+
+*Code for reading in the dataset and/or processing the data*
+```{r}
+data <- read.csv("activity.csv",na.strings = "NA")
+data$date <- as.Date(data$date, "%Y-%m-%d")
+missingValues <- is.na(as.character(data$steps))
+data_no_NA <- data[!missingValues,]
+```
+
+*Histogram of the total number of steps taken each day*
+```{r}
+stepsEachDay <- aggregate(steps ~ date, data = data_no_NA, sum)
+colnames(stepsEachDay) <- c("Date", "Total_Steps")
+```
+```{r fig.height=6}
+hist(as.numeric(stepsEachDay$Total_Steps), breaks = 20, col = "blue", 
+     xlab = "Number of Steps", 
+     main= "Histogram of the Total Number of Steps Taken Each Day")
+```
+
+*Mean and median number of steps taken each day*
+Mean:
+```{r}
+mean(stepsEachDay$Total_Steps)
+```
+Median:
+```{r}
+median(stepsEachDay$Total_Steps)
+```
+
+*Time series plot of the average number of steps taken*
+```{r}
+stepsPerInterval <- aggregate(data_no_NA$steps, by=list(interval=data_no_NA$interval), FUN=mean)
+colnames(stepsPerInterval) <- c("Interval", "Average_Steps")
+```
+```{r fig.height=6}
+plot(stepsPerInterval$Interval, stepsPerInterval$Average_Steps, type="l",
+     col = "blue", xlab = "Interval", ylab = "Average Number of Steps", 
+     main = "Average Daily Activity Pattern")
+```
+
+*The 5-minute interval that, on average, contains the maximum number of steps*
+```{r}
+stepsPerInterval[which.max(stepsPerInterval$Average_Steps),]$Interval
+```
+
+*Total number of missing values in the dataset*
+Number of missing values in variable "steps":
+```{r}
+sum(is.na(as.character(data$steps)))
+```
+
+Number of missing values in variable "date":
+```{r}
+sum(is.na(as.character(data$date)))
+```
+
+Number of missing values in variable "interval":
+```{r}
+sum(is.na(as.character(data$interval)))
+```
+Therefore, the total number of missing values in the dataset is 2304.
+
+*Code to describe and show a strategy for imputing missing data*
+```{r}
+NA_index <- which(is.na(as.character(data$steps)))
+complete_data <- data
+```
+*Imputing missing values using the mean for that 5-minute interval*
+```{r}
+complete_data[NA_index, ]$steps<-unlist(lapply(NA_index, FUN=function(NA_index){
+                        stepsPerInterval[data[NA_index,]$interval==stepsPerInterval$Interval,]$Average_Steps
+                        }))
+```
+
+*Histogram of the total number of steps taken each day after missing values are imputed*
+```{r}
+stepsEachDay_complete <- aggregate(steps ~ date, data = complete_data, sum)
+colnames(stepsEachDay_complete) <- c("Date", "Total_Steps")
+```
+```{r fig.height=6}
+hist(as.numeric(stepsEachDay_complete$Total_Steps), breaks = 20, col = "red", 
+     xlab = "Number of Steps", 
+     main= "Histogram of the Total Number of Steps Taken Each Day")
+```
+
+**Mean and median number of steps taken each day after missing values are imputed*
+Mean:
+```{r}
+mean(stepsEachDay_complete$Total_Steps)
+```
+Median:
+```{r}
+median(stepsEachDay_complete$Total_Steps)
+```
+
+Impact of imputing missing data on the estimates of the total daily number of steps are minimal as the histogram, mean and median values did not differ very much from the original dataset.
+
+*Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends*
+Creating a new variable for day
+```{r}
+complete_data$day <- as.factor(weekdays(as.Date(complete_data$date, "%Y-%m-%d")))
+complete_data$weektype <- ifelse(!(complete_data$day %in% c("Saturday","Sunday")), "Weekday", "Weekend")
+```
+
+Creating subsets for Weekday and Weekend data
+```{r}
+weekday <- complete_data[complete_data$weektype == "Weekday",]
+weekend <- complete_data[complete_data$weektype == "Weekend",]
+```
+```{r}
+stepsPerInterval_weekday <- aggregate(weekday$steps, by=list(interval=weekday$interval), FUN=mean)
+stepsPerInterval_weekend <- aggregate(weekend$steps, by=list(interval=weekend$interval), FUN=mean)
+colnames(stepsPerInterval_weekday) <- c("Interval", "Average_Steps")
+colnames(stepsPerInterval_weekend) <- c("Interval", "Average_Steps")
+stepsPerInterval_weekday$Day <- "Weekday"
+stepsPerInterval_weekend$Day <- "Weekend"
+```
+
+Merging both datasets
+```{r}
+dataByType <- rbind(stepsPerInterval_weekend, stepsPerInterval_weekday)
+dataByType$Day <- as.factor(dataByType$Day)
+```
+
+Building time series plot
+```{r fig.height=6}
+library(lattice)
+xyplot(Average_Steps ~ Interval | Day, data = dataByType, 
+       layout = c(1,2), type = "l", ylab = "Number of Steps")
+```
