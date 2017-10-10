@@ -1,0 +1,101 @@
+---
+title: "Prediction Assignment Writeup"
+author: "LLW"
+date: "3 October 2017"
+output: html_document
+---
+
+##Background
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. 
+
+Data Source:
+http://web.archive.org/web/20161224072740/http:/groupware.les.inf.puc-rio.br/har
+
+### Loading Data
+
+```{r}
+# Reading in data while setting values with #DIV/0! as missing values
+training = read.csv("pml-training.csv", na.strings=c("#DIV/0!"), header = TRUE)
+testing = read.csv("pml-testing.csv", na.strings=c("#DIV/0!"), header = TRUE)
+
+# Loading required R packages
+library(caret)
+library(ggplot2)
+library(randomForest)
+library(e1071)
+library(gbm)
+```
+
+### Preprocessing Data
+
+```{r}
+# Obtain a subset of the training set from the 6th to the last column
+training <- training[, 6:dim(training)[2]]
+
+#Remove columns with more than 95% of NA or "" values
+threshold <- dim(training)[1] * 0.95
+goodColumns <- !apply(training, 2, function(x) sum(is.na(x)) > threshold  || sum(x=="") > threshold)
+training <- training[, goodColumns]
+
+#Excluding near zero covariates in Training Set
+zeroCov <- nearZeroVar(training,saveMetrics = TRUE)
+training <- training[,zeroCov$nzv==FALSE]
+training$classe = factor(training$classe)
+```
+
+### Performing Prediction Study Design
+
+```{r}
+#Partition the training set into training and validation set
+inTrain <- createDataPartition(training$classe, p = 0.6)[[1]]
+validation <- training[-inTrain,]
+training <- training[ inTrain,]
+inTrain <- createDataPartition(validation$classe, p = 0.75)[[1]]
+validation_test <- validation[ -inTrain,]
+validation <- validation[inTrain,]
+
+testing <- testing[, 6:dim(testing)[2]]
+testing <- testing[, goodColumns]
+testing$classe <- NA
+
+#Excluding near zero covariates in Testing Set
+testing <- testing[, zeroCov$nzv==FALSE]
+```
+
+### Model Train
+In this assignment, I will use Random Forest as the model.
+
+```{r}
+mod1 <- train(classe ~ ., method="rf", data=training, trControl = trainControl (method="cv"),number=3)
+```
+
+### Model Validation
+
+```{r}
+predVal <- predict(mod1, validation)
+
+#Compute Confusion Matrix
+cfmVal <- confusionMatrix(predVal, validation$classe)
+print(cfmVal)
+```
+
+Given that the cross validation accuracy is 99.6%, it appears that the model is reasonably good. But we would still need to do the test on the validation test set to check if there is element of overfitting present.
+
+### Test Set Prediction
+
+```{r}
+#Out-of-sample error
+predTest <- predict(mod1, validation_test)
+accuracy <- sum(predTest == validation_test$classe) / length(predTest)
+print(accuracy)
+```
+
+Again, this model achieved a 99.6% accuracy on the validation test set. Therefore, the Random Forest method worked rather well. Lastly, I will plot the top 15 most important variables for referencing.
+
+Obtain Top 15 Most Important Variables
+
+```{r}
+varImpRF <- train(classe ~ ., data = training, method = "rf")
+varImpObj <- varImp(varImpRF)
+plot(varImpObj, main = "Importance of Top 15 Variables", top = 15)
+```
